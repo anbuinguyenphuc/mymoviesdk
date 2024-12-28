@@ -2,7 +2,7 @@
   "name": "mymoviesdk",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "@testing-library/react": "^16.1.0",
     "cra-template-typescript": "1.2.0",
     "react": "^19.0.0",

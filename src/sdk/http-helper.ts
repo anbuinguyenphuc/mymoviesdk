@@ -11,6 +11,7 @@ const checkAPIKey = () => {
 export const get = ({ url }: { url: string }): Promise<any> => {
   checkAPIKey();
   return new Promise(function (resolve, reject) {
+    console.log("MOVIE-SDK:requesting " + url);
     const options = {
       method: "GET",
       headers: {

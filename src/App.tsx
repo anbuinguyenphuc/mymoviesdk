@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { useSearchMovie } from "./sdk/MovieManager";
+import { useGetMovieKeywords, useSearchMovie } from "./sdk/MovieManager";
 import { IMAGE_ORIGINAL_URL } from "./sdk/ApiDomain";
 import "./index.css";
 import { initSdk } from "./sdk/http-helper";
@@ -14,7 +14,9 @@ function App() {
     initSearchQuery: "",
     performanceMode: "debounce",
   });
+  const { keywords } = useGetMovieKeywords({ id: 1156593 });
   console.log("movieList: " + JSON.stringify(movieList));
+  console.log("keywords: " + JSON.stringify(keywords));
   return (
     <div className="App">
       <div className="movie-list">

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { IMovie, IMovieDetail, Review } from "./type";
+import { IMovie, IMovieDetail, Keyword, Review } from "./type";
 import { useDebounce } from "./useDebounce";
 import {
   GET_MOVIE_DETAIL_URL,
+  GET_MOVIE_KEYWORDS,
   GET_MOVIE_REVIEWS_URL,
   IMAGE_ORIGINAL_URL,
   SEARCH_MOVIE_URL,
@@ -117,4 +118,26 @@ export function useGetMovieReviews({
       .catch((err) => console.error(err));
   }, [page]);
   return { reviews, loading, totalPage };
+}
+
+export function useGetMovieKeywords({ id }: { id: number }): {
+  keywords: Keyword[];
+  loading: boolean;
+} {
+  const [keywords, setKeywords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+
+    //get movie review
+    const url = GET_MOVIE_KEYWORDS(id);
+
+    get({ url })
+      .then((json) => {
+        setLoading(false);
+        setKeywords(json?.keywords);
+      })
+      .catch((err) => console.error(err));
+  }, []);
+  return { keywords, loading };
 }

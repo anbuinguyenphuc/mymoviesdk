@@ -89,3 +89,8 @@ export type Review = {
   updated_at: string; // ISO date string
   url: string;
 };
+
+export type Keyword = {
+  id: number;
+  name: string;
+};

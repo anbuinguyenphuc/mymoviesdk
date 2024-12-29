@@ -1,29 +1,40 @@
-import {useEffect, useState} from 'react';
-export const API_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMDUwZmYxZWEwNjEwYmZlNDJkMGJiMzEyZWUxNmRiYSIsIm5iZiI6MTczNTI3MDE3NC4xOTkwMDAxLCJzdWIiOiI2NzZlMWYxZTc2OTg1MmYyOTAxMjlkZDUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.-aFhPbLWbDyO_JTeURYXRdX9tTYug-HBAalQhmwXRQI'
+import { useEffect, useState } from "react";
 
-import {IMovie, IMovieDetail, Review} from './type';
-import {useDebounce} from './useDebounce';
+import { IMovie, IMovieDetail, Review } from "./type";
+import { useDebounce } from "./useDebounce";
 import {
   GET_MOVIE_DETAIL_URL,
   GET_MOVIE_REVIEWS_URL,
   IMAGE_ORIGINAL_URL,
   SEARCH_MOVIE_URL,
   TRENDING_MOVIE_URL,
-} from './ApiDomain';
+} from "./ApiDomain";
+
+let API_KEY;
+export function initSdk({ API_KEY }) {
+  API_KEY = API_KEY;
+}
+
+const checkAPIKey = () => {
+  if (!API_KEY) {
+    throw new Error("API_KEY is not provided, must call initSDK first");
+  }
+};
 
 export function useSearchMovie({
   initSearchQuery,
   performanceMode,
 }: {
   initSearchQuery: string;
-  performanceMode: 'debounce' | 'normal';
+  performanceMode: "debounce" | "normal";
 }) {
+  checkAPIKey();
   const [query, setQuery] = useState(initSearchQuery);
   const [loading, setLoading] = useState(false);
   const [movieList, setMovieList] = useState<IMovie[]>([]);
   const debouncedSearchQuery = useDebounce(
     query,
-    performanceMode == 'debounce' ? 500 : 0,
+    performanceMode == "debounce" ? 500 : 0
   );
   useEffect(() => {
     const url = debouncedSearchQuery
@@ -31,16 +42,16 @@ export function useSearchMovie({
       : `${SEARCH_MOVIE_URL}`;
 
     const options = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        accept: 'application/json',
+        accept: "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
     };
 
     fetch(url, options)
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setLoading(false);
         setMovieList(
           json.results.map((i: any) => {
@@ -50,10 +61,10 @@ export function useSearchMovie({
                 ? IMAGE_ORIGINAL_URL + i.backdrop_path
                 : null,
             };
-          }),
+          })
         );
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, [debouncedSearchQuery]);
 
   const setSearchQuery = (newQuery: string) => {
@@ -69,10 +80,11 @@ export function useSearchMovie({
   };
 }
 
-export function useGetMovieDetail({id}: {id: number}): {
+export function useGetMovieDetail({ id }: { id: number }): {
   movieDetail: IMovieDetail | null;
   loading: boolean;
 } {
+  checkAPIKey();
   const [movieDetail, setMovieDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -82,16 +94,16 @@ export function useGetMovieDetail({id}: {id: number}): {
     const url = `${GET_MOVIE_DETAIL_URL}${id}?&append_to_response=credits`;
 
     const options = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        accept: 'application/json',
+        accept: "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
     };
 
     fetch(url, options)
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         setLoading(false);
         setMovieDetail({
           ...json,
@@ -100,16 +112,23 @@ export function useGetMovieDetail({id}: {id: number}): {
             : null,
         });
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
-  return {movieDetail, loading};
+  return { movieDetail, loading };
 }
 
-export function useGetMovieReviews({id, page}: {id: number; page: number}): {
+export function useGetMovieReviews({
+  id,
+  page,
+}: {
+  id: number;
+  page: number;
+}): {
   reviews: Review[];
   totalPage: number;
   loading: boolean;
 } {
+  checkAPIKey();
   const [totalPage, setTotalPage] = useState(page);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -119,22 +138,22 @@ export function useGetMovieReviews({id, page}: {id: number; page: number}): {
     //get movie review
     const url = GET_MOVIE_REVIEWS_URL(id, page);
     const options = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        accept: 'application/json',
+        accept: "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
     };
 
     fetch(url, options)
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         //console.log("anbnp",JSON.stringify(json));
         setLoading(false);
         setReviews(json?.results);
         setTotalPage(json?.total_pages);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, [page]);
-  return {reviews, loading, totalPage};
+  return { reviews, loading, totalPage };
 }

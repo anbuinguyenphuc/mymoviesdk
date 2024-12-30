@@ -19,6 +19,7 @@ import {
   searchMovies,
 } from "./redux/movieSlice";
 // #region API v1
+// deprecated
 export function useSearchMovie({
   initSearchQuery,
   performanceMode,
@@ -186,13 +187,12 @@ export function useGetMovieKeywords({ id }: { id: number }): {
 // #endregion
 
 // #region API v2 using redux
+let page = 1
 export function useSearchMovieV2({
   initSearchQuery,
-  initPage = 1,
   performanceMode,
 }: {
   initSearchQuery: string;
-  initPage?: number;
   performanceMode: "debounce" | "normal";
 }) {
   const dispatch = useDispatch();
@@ -204,23 +204,31 @@ export function useSearchMovieV2({
     query,
     performanceMode == "debounce" ? 500 : 0
   );
-
-  const requestSearchMovies = (searchQuery, page) => {
-    dispatch(searchMovies({ searchQuery: searchQuery, page }));
+  
+  const loadMore = () => {
+    page = page+1
+    dispatch(searchMovies({ searchQuery: query, page }))
   };
   useEffect(() => {
-    requestSearchMovies(debouncedSearchQuery, initPage);
+    dispatch(searchMovies({ searchQuery: debouncedSearchQuery, page }))
   }, [debouncedSearchQuery]);
 
   const setSearchQuery = (newQuery: string) => {
     setQuery(newQuery);
+    page = 1
   };
 
+  let movieList: IMovie[] = [];
+  Object.entries(movies).forEach(([key, value]: any) => {
+    movieList = movieList.concat(value);
+  });
+
+
   return {
-    movieList: movies,
+    movieList: movieList,
     moviesTotalPages,
     setSearchQuery: setSearchQuery,
-    refreshMovies: requestSearchMovies,
+    loadMore,
     searchQuery: query,
     loading: loadingMovies,
     error,

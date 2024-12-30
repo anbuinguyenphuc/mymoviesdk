@@ -23,7 +23,7 @@ export const searchMovies = createAsyncThunk(
         : `${TRENDING_MOVIE_URL}`;
       const json = await get({ url });
       //console.log("anbnp test:", JSON.stringify(json));
-      return { ...json, searchQuery: searchQuery }; // Automatically becomes `payload` in `fulfilled` case
+      return json; // Automatically becomes `payload` in `fulfilled` case
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message); // For `rejected` case
     }
@@ -113,14 +113,23 @@ const moviesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(searchMovies.pending, (state) => {
-        state.loadingMovies = true;
+      .addCase(searchMovies.pending, (state, action) => {
+        //only loading for first search
+        const page = action?.meta?.arg?.page;
+        if (page == 1) {
+          state.loadingMovies = true;
+        }
+
         state.error = null;
       })
       .addCase(searchMovies.fulfilled, (state, action) => {
-        state.loadingMovies = false;
+        //only loading for first search
+        const page = action?.meta?.arg?.page;
+        if (page == 1) {
+          state.loadingMovies = false;
+        }
         //reset when user search new query
-        if (state.searchQuery != action.payload?.query) {
+        if (state.searchQuery != action?.meta?.arg?.searchQuery) {
           state.movies = {};
         }
         state.movies[action.payload?.page || 1] = action?.payload?.results?.map(
@@ -133,11 +142,14 @@ const moviesSlice = createSlice({
             };
           }
         );
-        state.searchQuery = action.payload?.query;
+        state.searchQuery = action?.meta?.arg?.searchQuery;
         state.moviesTotalPages = action?.payload?.total_pages || 0;
       })
       .addCase(searchMovies.rejected, (state, action) => {
-        state.loadingMovies = false;
+        const page = action?.meta?.arg?.page;
+        if (page == 1) {
+          state.loadingMovies = false;
+        }
         state.error = action.payload;
       })
       .addCase(getMovieDetail.pending, (state) => {

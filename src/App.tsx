@@ -37,14 +37,13 @@ function App() {
   const {
     movieList: movieListV2,
     moviesTotalPages,
-    refreshMovies,
+    loadMore,
   } = useSearchMovieV2({
     initSearchQuery: "avenger",
-    initPage: 2,
     performanceMode: "debounce",
   });
   useEffect(() => {
-    refreshMovies("avenger", 3);
+    loadMore();
   }, []);
   const { keywords: keywordsV2 } = useGetMovieKeywordsV2({
     id: SAMPLE_MOVIE_ID,

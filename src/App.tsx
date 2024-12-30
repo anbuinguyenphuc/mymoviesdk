@@ -29,10 +29,10 @@ function App() {
   const { keywords } = useGetMovieKeywords({ id: SAMPLE_MOVIE_ID });
   const { movieDetail } = useGetMovieDetail({ id: SAMPLE_MOVIE_ID });
   const { reviews } = useGetMovieReviews({ id: SAMPLE_MOVIE_ID, page: 1 });
-  console.log("movieListV2: " + JSON.stringify(movieList));
-  console.log("movieDetailV2: " + JSON.stringify(movieDetail));
-  console.log("reviewsV2: " + JSON.stringify(reviews));
-  console.log("keywordsV2: " + JSON.stringify(keywords));
+  console.log("movieList: " + JSON.stringify(movieList));
+  console.log("movieDetail: " + JSON.stringify(movieDetail));
+  console.log("reviews: " + JSON.stringify(reviews));
+  console.log("keywords: " + JSON.stringify(keywords));
   //V2
   const { movieList: movieListV2 } = useSearchMovieV2({
     initSearchQuery: "",

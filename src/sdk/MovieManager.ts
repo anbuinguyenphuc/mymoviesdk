@@ -206,6 +206,8 @@ export function useSearchMovieV2({
   );
 
   const loadMore = () => {
+    //stop loading more if reach the end
+    if (moviesTotalPages <= page) return;
     page = page + 1;
     dispatch(searchMovies({ searchQuery: query, page }));
   };

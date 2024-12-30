@@ -12,7 +12,12 @@ import {
 } from "./ApiDomain";
 import { get } from "./http-helper";
 import { useDispatch, useSelector } from "react-redux";
-import { searchMovies } from "./redux/movieSlice";
+import {
+  getMovieDetail,
+  getMovieKeywords,
+  getMovieReviews,
+  searchMovies,
+} from "./redux/movieSlice";
 // #region API v1
 export function useSearchMovie({
   initSearchQuery,
@@ -215,5 +220,57 @@ export function useSearchMovieV2({
     loading,
     error,
   };
+}
+
+export function useGetMovieDetailV2({ id }: { id: number }): {
+  movieDetail: IMovieDetail | null;
+  loading: boolean;
+  error: Error;
+} {
+  const dispatch = useDispatch();
+  const { loading, movieDetail, error } = useSelector(
+    (state: any) => state.movies
+  );
+  useEffect(() => {
+    dispatch(getMovieDetail({ id: id }));
+  }, []);
+  return { movieDetail, loading, error };
+}
+
+export function useGetMovieReviewsV2({
+  id,
+  page,
+}: {
+  id: number;
+  page: number;
+}): {
+  reviews: Review[];
+  totalPage: number;
+  loading: boolean;
+  error: Error;
+} {
+  const dispatch = useDispatch();
+  const { loading, reviews, reviewsTotalPage, error } = useSelector(
+    (state: any) => state.movies
+  );
+  useEffect(() => {
+    dispatch(getMovieReviews({ id: id, page: page }));
+  }, [page]);
+  return { reviews, loading, totalPage: reviewsTotalPage, error };
+}
+
+export function useGetMovieKeywordsV2({ id }: { id: number }): {
+  keywords: Keyword[];
+  loading: boolean;
+  error: Error;
+} {
+  const dispatch = useDispatch();
+  const { loading, keywords, error } = useSelector(
+    (state: any) => state.movies
+  );
+  useEffect(() => {
+    dispatch(getMovieKeywords({ id: id }));
+  }, []);
+  return { keywords, loading, error };
 }
 // #endregion

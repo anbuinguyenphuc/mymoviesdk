@@ -187,7 +187,7 @@ export function useGetMovieKeywords({ id }: { id: number }): {
 // #endregion
 
 // #region API v2 using redux
-let page = 1
+let page = 1;
 export function useSearchMovieV2({
   initSearchQuery,
   performanceMode,
@@ -204,25 +204,24 @@ export function useSearchMovieV2({
     query,
     performanceMode == "debounce" ? 500 : 0
   );
-  
+
   const loadMore = () => {
-    page = page+1
-    dispatch(searchMovies({ searchQuery: query, page }))
+    page = page + 1;
+    dispatch(searchMovies({ searchQuery: query, page }));
   };
   useEffect(() => {
-    dispatch(searchMovies({ searchQuery: debouncedSearchQuery, page }))
+    dispatch(searchMovies({ searchQuery: debouncedSearchQuery, page }));
   }, [debouncedSearchQuery]);
 
   const setSearchQuery = (newQuery: string) => {
     setQuery(newQuery);
-    page = 1
+    page = 1;
   };
 
   let movieList: IMovie[] = [];
   Object.entries(movies).forEach(([key, value]: any) => {
     movieList = movieList.concat(value);
   });
-
 
   return {
     movieList: movieList,

@@ -11,7 +11,9 @@ import {
   TRENDING_MOVIE_URL,
 } from "./ApiDomain";
 import { get } from "./http-helper";
-
+import { useDispatch, useSelector } from "react-redux";
+import { searchMovies } from "./redux/movieSlice";
+// #region API v1
 export function useSearchMovie({
   initSearchQuery,
   performanceMode,
@@ -165,7 +167,7 @@ export function useGetMovieKeywords({ id }: { id: number }): {
     get({ url })
       .then((json) => {
         setLoading(false);
-        setError(null)
+        setError(null);
         setKeywords(json?.keywords);
       })
       .catch((err) => {
@@ -176,3 +178,42 @@ export function useGetMovieKeywords({ id }: { id: number }): {
   }, []);
   return { keywords, loading, error };
 }
+// #endregion
+
+// #region API v2 using redux
+export function useSearchMovieV2({
+  initSearchQuery,
+  performanceMode,
+}: {
+  initSearchQuery: string;
+  performanceMode: "debounce" | "normal";
+}) {
+  const dispatch = useDispatch();
+  const [query, setQuery] = useState(initSearchQuery);
+  const { loading, movies, error } = useSelector((state: any) => state.movies);
+  const debouncedSearchQuery = useDebounce(
+    query,
+    performanceMode == "debounce" ? 500 : 0
+  );
+
+  const requestSearchMovies = () => {
+    dispatch(searchMovies({ searchQuery: debouncedSearchQuery }));
+  };
+  useEffect(() => {
+    requestSearchMovies();
+  }, [debouncedSearchQuery]);
+
+  const setSearchQuery = (newQuery: string) => {
+    setQuery(newQuery);
+  };
+
+  return {
+    movieList: movies,
+    setSearchQuery: setSearchQuery,
+    refreshMovies: requestSearchMovies,
+    searchQuery: query,
+    loading,
+    error,
+  };
+}
+// #endregion

@@ -8,7 +8,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "@reduxjs/toolkit": "1.8.1",
+    "react-redux": "7.1.16"
   },
   "scripts": {
     "start": "react-scripts start",

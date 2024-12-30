@@ -8,7 +8,8 @@
       "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
       "jsx": "react",
       "paths": { "react": ["./node_modules/@types/react"] },
-      "noImplicitAny": false
+      "noImplicitAny": false,
+      "esModuleInterop": true,
     }
   }
   

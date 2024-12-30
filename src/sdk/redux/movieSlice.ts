@@ -69,8 +69,12 @@ export const getMovieKeywords = createAsyncThunk(
   }
 );
 
+//This store should be divided into multiple slices to improve maintainability.
 const initialState: {
-  loading: boolean;
+  loadingMovies: boolean;
+  loadingMovieDetail: boolean;
+  loadingReview: boolean;
+  loadingKeyword: boolean;
   movies: IMovie[];
   movieDetail: IMovieDetail;
   reviews: Review[];
@@ -78,7 +82,10 @@ const initialState: {
   keywords: Keyword[];
   error: any;
 } = {
-  loading: false,
+  loadingMovies: false,
+  loadingMovieDetail: false,
+  loadingReview: false,
+  loadingKeyword: false,
   movies: [],
   movieDetail: null,
   reviews: [],
@@ -96,11 +103,11 @@ const moviesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(searchMovies.pending, (state) => {
-        state.loading = true;
+        state.loadingMovies = true;
         state.error = null;
       })
       .addCase(searchMovies.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingMovies = false;
         state.movies = action?.payload?.results?.map((i: any) => {
           return {
             ...i,
@@ -109,15 +116,15 @@ const moviesSlice = createSlice({
         });
       })
       .addCase(searchMovies.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingMovies = false;
         state.error = action.payload;
       })
       .addCase(getMovieDetail.pending, (state) => {
-        state.loading = true;
+        state.loadingMovieDetail = true;
         state.error = null;
       })
       .addCase(getMovieDetail.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingMovieDetail = false;
         const payload = action?.payload || {};
         state.movieDetail = {
           ...payload,
@@ -127,36 +134,36 @@ const moviesSlice = createSlice({
         };
       })
       .addCase(getMovieDetail.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingMovieDetail = false;
         state.error = action.payload;
       })
 
       .addCase(getMovieReviews.pending, (state) => {
-        state.loading = true;
+        state.loadingReview = true;
         state.error = null;
       })
       .addCase(getMovieReviews.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingReview = false;
         const payload = action?.payload || {};
         state.reviews = payload?.results || [];
         state.reviewsTotalPage = payload?.total_pages || [];
       })
       .addCase(getMovieReviews.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingReview = false;
         state.error = action.payload;
       })
 
       .addCase(getMovieKeywords.pending, (state) => {
-        state.loading = true;
+        state.loadingKeyword = true;
         state.error = null;
       })
       .addCase(getMovieKeywords.fulfilled, (state, action) => {
-        state.loading = false;
+        state.loadingKeyword = false;
         const payload = action?.payload || {};
         state.keywords = payload?.keywords || [];
       })
       .addCase(getMovieKeywords.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingKeyword = false;
         state.error = action.payload;
       });
   },

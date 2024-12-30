@@ -195,7 +195,9 @@ export function useSearchMovieV2({
 }) {
   const dispatch = useDispatch();
   const [query, setQuery] = useState(initSearchQuery);
-  const { loading, movies, error } = useSelector((state: any) => state.movies);
+  const { loadingMovies, movies, error } = useSelector(
+    (state: any) => state.movies
+  );
   const debouncedSearchQuery = useDebounce(
     query,
     performanceMode == "debounce" ? 500 : 0
@@ -217,7 +219,7 @@ export function useSearchMovieV2({
     setSearchQuery: setSearchQuery,
     refreshMovies: requestSearchMovies,
     searchQuery: query,
-    loading,
+    loading: loadingMovies,
     error,
   };
 }
@@ -228,13 +230,13 @@ export function useGetMovieDetailV2({ id }: { id: number }): {
   error: Error;
 } {
   const dispatch = useDispatch();
-  const { loading, movieDetail, error } = useSelector(
+  const { loadingMovieDetail, movieDetail, error } = useSelector(
     (state: any) => state.movies
   );
   useEffect(() => {
     dispatch(getMovieDetail({ id: id }));
   }, []);
-  return { movieDetail, loading, error };
+  return { movieDetail, loading: loadingMovieDetail, error };
 }
 
 export function useGetMovieReviewsV2({
@@ -250,13 +252,18 @@ export function useGetMovieReviewsV2({
   error: Error;
 } {
   const dispatch = useDispatch();
-  const { loading, reviews, reviewsTotalPage, error } = useSelector(
+  const { loadingReview, reviews, reviewsTotalPage, error } = useSelector(
     (state: any) => state.movies
   );
   useEffect(() => {
     dispatch(getMovieReviews({ id: id, page: page }));
   }, [page]);
-  return { reviews, loading, totalPage: reviewsTotalPage, error };
+  return {
+    reviews,
+    loading: loadingReview,
+    totalPage: reviewsTotalPage,
+    error,
+  };
 }
 
 export function useGetMovieKeywordsV2({ id }: { id: number }): {
@@ -265,12 +272,12 @@ export function useGetMovieKeywordsV2({ id }: { id: number }): {
   error: Error | null;
 } {
   const dispatch = useDispatch();
-  const { loading, keywords, error } = useSelector(
+  const { loadingKeyword, keywords, error } = useSelector(
     (state: any) => state.movies
   );
   useEffect(() => {
     dispatch(getMovieKeywords({ id: id }));
   }, []);
-  return { keywords, loading, error };
+  return { keywords, loading: loadingKeyword, error };
 }
 // #endregion

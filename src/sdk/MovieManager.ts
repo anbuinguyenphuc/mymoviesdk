@@ -37,7 +37,7 @@ export function useSearchMovie({
 
   const requestSearchMovies = () => {
     const url = debouncedSearchQuery
-      ? `${SEARCH_MOVIE_URL}${debouncedSearchQuery}`
+      ? SEARCH_MOVIE_URL(debouncedSearchQuery, 1)
       : `${TRENDING_MOVIE_URL}`;
 
     get({ url })
@@ -188,14 +188,16 @@ export function useGetMovieKeywords({ id }: { id: number }): {
 // #region API v2 using redux
 export function useSearchMovieV2({
   initSearchQuery,
+  initPage = 1,
   performanceMode,
 }: {
   initSearchQuery: string;
+  initPage?: number;
   performanceMode: "debounce" | "normal";
 }) {
   const dispatch = useDispatch();
   const [query, setQuery] = useState(initSearchQuery);
-  const { loadingMovies, movies, error } = useSelector(
+  const { loadingMovies, movies, error, moviesTotalPages } = useSelector(
     (state: any) => state.movies
   );
   const debouncedSearchQuery = useDebounce(
@@ -203,11 +205,11 @@ export function useSearchMovieV2({
     performanceMode == "debounce" ? 500 : 0
   );
 
-  const requestSearchMovies = () => {
-    dispatch(searchMovies({ searchQuery: debouncedSearchQuery }));
+  const requestSearchMovies = (page) => {
+    dispatch(searchMovies({ searchQuery: debouncedSearchQuery, page }));
   };
   useEffect(() => {
-    requestSearchMovies();
+    requestSearchMovies(initPage);
   }, [debouncedSearchQuery]);
 
   const setSearchQuery = (newQuery: string) => {
@@ -216,6 +218,7 @@ export function useSearchMovieV2({
 
   return {
     movieList: movies,
+    moviesTotalPages,
     setSearchQuery: setSearchQuery,
     refreshMovies: requestSearchMovies,
     searchQuery: query,

@@ -13,14 +13,17 @@ import { IMovie, IMovieDetail, Keyword, Review } from "../type";
 // Async thunk to fetch posts
 export const searchMovies = createAsyncThunk(
   "movies/searchMovies",
-  async ({ searchQuery }: { searchQuery: string }, thunkAPI) => {
+  async (
+    { searchQuery, page = 1 }: { searchQuery: string; page: number },
+    thunkAPI
+  ) => {
     try {
       const url = searchQuery
-        ? `${SEARCH_MOVIE_URL}${searchQuery}`
+        ? SEARCH_MOVIE_URL(searchQuery, page)
         : `${TRENDING_MOVIE_URL}`;
       const json = await get({ url });
-      //console.log("anbnp test:",JSON.stringify(json));
-      return json; // Automatically becomes `payload` in `fulfilled` case
+      console.log("anbnp test:", JSON.stringify(json));
+      return { ...json, searchQuery: searchQuery }; // Automatically becomes `payload` in `fulfilled` case
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message); // For `rejected` case
     }
@@ -75,7 +78,13 @@ const initialState: {
   loadingMovieDetail: boolean;
   loadingReview: boolean;
   loadingKeyword: boolean;
-  movies: IMovie[];
+  movies:
+    | {
+        [key: number]: IMovie[];
+      }
+    | {};
+  moviesTotalPages: number;
+  searchQuery: string;
   movieDetail: IMovieDetail;
   reviews: Review[];
   reviewsTotalPage: number;
@@ -86,7 +95,9 @@ const initialState: {
   loadingMovieDetail: false,
   loadingReview: false,
   loadingKeyword: false,
-  movies: [],
+  movies: {},
+  moviesTotalPages: 0,
+  searchQuery: "",
   movieDetail: null,
   reviews: [],
   reviewsTotalPage: 0,
@@ -108,12 +119,22 @@ const moviesSlice = createSlice({
       })
       .addCase(searchMovies.fulfilled, (state, action) => {
         state.loadingMovies = false;
-        state.movies = action?.payload?.results?.map((i: any) => {
-          return {
-            ...i,
-            uri: i.backdrop_path ? IMAGE_ORIGINAL_URL + i.backdrop_path : null,
-          };
-        });
+        //reset when user search new query
+        if (state.searchQuery != action.payload?.query) {
+          state.movies = {};
+        }
+        state.movies[action.payload?.page || 1] = action?.payload?.results?.map(
+          (i: any) => {
+            return {
+              ...i,
+              uri: i.backdrop_path
+                ? IMAGE_ORIGINAL_URL + i.backdrop_path
+                : null,
+            };
+          }
+        );
+        state.searchQuery = action.payload?.query;
+        state.moviesTotalPages = action?.payload?.total_pages || 0;
       })
       .addCase(searchMovies.rejected, (state, action) => {
         state.loadingMovies = false;

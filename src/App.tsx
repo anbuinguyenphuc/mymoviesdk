@@ -34,10 +34,18 @@ function App() {
   console.log("reviews: " + JSON.stringify(reviews));
   console.log("keywords: " + JSON.stringify(keywords));
   //V2
-  const { movieList: movieListV2 } = useSearchMovieV2({
-    initSearchQuery: "",
+  const {
+    movieList: movieListV2,
+    moviesTotalPages,
+    refreshMovies,
+  } = useSearchMovieV2({
+    initSearchQuery: "avenger",
+    initPage: 2,
     performanceMode: "debounce",
   });
+  useEffect(() => {
+    refreshMovies(3);
+  }, []);
   const { keywords: keywordsV2 } = useGetMovieKeywordsV2({
     id: SAMPLE_MOVIE_ID,
   });
@@ -48,6 +56,7 @@ function App() {
     id: SAMPLE_MOVIE_ID,
     page: 1,
   });
+  console.log("movieListV2 total_page: " + JSON.stringify(moviesTotalPages));
   console.log("movieListV2: " + JSON.stringify(movieListV2));
   console.log("movieDetailV2: " + JSON.stringify(movieDetailV2));
   console.log("reviewsV2: " + JSON.stringify(reviewsV2));

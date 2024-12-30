@@ -94,3 +94,10 @@ export type Keyword = {
   id: number;
   name: string;
 };
+
+export type IMovieList = {
+  page: number;
+  results: IMovie[];
+  total_pages: number;
+  total_results: number;
+};

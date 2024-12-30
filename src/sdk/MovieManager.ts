@@ -205,11 +205,11 @@ export function useSearchMovieV2({
     performanceMode == "debounce" ? 500 : 0
   );
 
-  const requestSearchMovies = (page) => {
-    dispatch(searchMovies({ searchQuery: debouncedSearchQuery, page }));
+  const requestSearchMovies = (searchQuery, page) => {
+    dispatch(searchMovies({ searchQuery: searchQuery, page }));
   };
   useEffect(() => {
-    requestSearchMovies(initPage);
+    requestSearchMovies(debouncedSearchQuery, initPage);
   }, [debouncedSearchQuery]);
 
   const setSearchQuery = (newQuery: string) => {

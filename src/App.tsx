@@ -44,7 +44,7 @@ function App() {
     performanceMode: "debounce",
   });
   useEffect(() => {
-    refreshMovies(3);
+    refreshMovies("avenger", 3);
   }, []);
   const { keywords: keywordsV2 } = useGetMovieKeywordsV2({
     id: SAMPLE_MOVIE_ID,

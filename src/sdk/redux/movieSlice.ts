@@ -22,7 +22,7 @@ export const searchMovies = createAsyncThunk(
         ? SEARCH_MOVIE_URL(searchQuery, page)
         : `${TRENDING_MOVIE_URL}`;
       const json = await get({ url });
-      console.log("anbnp test:", JSON.stringify(json));
+      //console.log("anbnp test:", JSON.stringify(json));
       return { ...json, searchQuery: searchQuery }; // Automatically becomes `payload` in `fulfilled` case
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message); // For `rejected` case

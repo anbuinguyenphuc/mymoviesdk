@@ -37,8 +37,8 @@ export function useSearchMovie({
 
   const requestSearchMovies = () => {
     const url = debouncedSearchQuery
-      ? `${TRENDING_MOVIE_URL}${debouncedSearchQuery}`
-      : `${SEARCH_MOVIE_URL}`;
+      ? `${SEARCH_MOVIE_URL}${debouncedSearchQuery}`
+      : `${TRENDING_MOVIE_URL}`;
 
     get({ url })
       .then((json) => {

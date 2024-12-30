@@ -16,8 +16,8 @@ export const searchMovies = createAsyncThunk(
   async ({ searchQuery }: { searchQuery: string }, thunkAPI) => {
     try {
       const url = searchQuery
-        ? `${TRENDING_MOVIE_URL}${searchQuery}`
-        : `${SEARCH_MOVIE_URL}`;
+        ? `${SEARCH_MOVIE_URL}${searchQuery}`
+        : `${TRENDING_MOVIE_URL}`;
       const json = await get({ url });
       //console.log("anbnp test:",JSON.stringify(json));
       return json; // Automatically becomes `payload` in `fulfilled` case

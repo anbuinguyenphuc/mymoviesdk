@@ -85,7 +85,7 @@ export function useSearchMovie({
 export function useGetMovieDetail({ id }: { id: number }): {
   movieDetail: IMovieDetail | null;
   loading: boolean;
-  error: Error;
+  error: Error | null;
 } {
   const [movieDetail, setMovieDetail] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -128,7 +128,7 @@ export function useGetMovieReviews({
   reviews: Review[];
   totalPage: number;
   loading: boolean;
-  error: Error;
+  error: Error | null;
 } {
   const [totalPage, setTotalPage] = useState(page);
   const [reviews, setReviews] = useState([]);
@@ -159,7 +159,7 @@ export function useGetMovieReviews({
 export function useGetMovieKeywords({ id }: { id: number }): {
   keywords: Keyword[];
   loading: boolean;
-  error: Error;
+  error: Error | null;
 } {
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -262,7 +262,7 @@ export function useGetMovieReviewsV2({
 export function useGetMovieKeywordsV2({ id }: { id: number }): {
   keywords: Keyword[];
   loading: boolean;
-  error: Error;
+  error: Error | null;
 } {
   const dispatch = useDispatch();
   const { loading, keywords, error } = useSelector(
